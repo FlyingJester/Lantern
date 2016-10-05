@@ -83,9 +83,18 @@ libs = [bufferfile]
 
 for name in libnames:
     result = SConscript(dirs = [name], exports = ["environment", "bufferfile"])
-    libs.append(result[0])
-    if len(result) > 1:
-        Install(os.path.join(os.getcwd(), "lantern"), result[1])
+    if os.name != "posix" and len(result) > 1:
+        rlibs = [{}, {}]
+        for r in result:
+            if str(r).endswith(".dll"):
+                rlibs[1] = r
+            elif str(r).endswith(".a") or r.endswith(".lib"):
+                rlibs[0] = r
+
+        Install(os.path.join(os.getcwd(), "lantern"), rlibs[1])
+        libs.append(rlibs[0])
+    else:
+        libs.append(result)
     environment = base.Clone()
 
 lantern = SConscript(dirs = ["src"], exports = ["environment", "libs", "is32bit", "mingw"])
