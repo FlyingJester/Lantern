@@ -1,0 +1,9 @@
+[submodule "aimg"]
+	path = aimg
+	url = https://github.com/FlyingJester/aimg
+[submodule "TurboJSON"]
+	path = TurboJSON
+	url = https://github.com/FlyingJester/TurboJSON
+[submodule "dlcl"]
+	path = dlcl
+	url = https://github.com/FlyingJester/dlcl
