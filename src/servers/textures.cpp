@@ -4,6 +4,7 @@
 
 #include "aimg/aimage.h"
 
+#include <algorithm>
 #include <cstdio>
 
 #ifdef _MSC_VER
@@ -14,48 +15,55 @@
 
 namespace Lantern {
 
-static const std::string image_dir = "images/";
-
-LX_Texture TextureServer::doLoad(const std::string &key){
-	Lantern_FileFinder *finder = (Lantern_FileFinder*)alloca(Lantern_FileFinderSize());
+void TextureServer::doTextureGenerate(const std::string &key,
+	unsigned img_err, AImg_Image &image, LX_Texture &texture){
 	
+	if(img_err != AIMG_LOADPNG_SUCCESS){
+		fprintf(stderr, "Error %i loading ", img_err);
+		fputs(key.c_str(), stderr);
+		fputc('\n', stderr);
+	}
+	else{
+		texture = LX_CreateTexture();
+		LX_UploadTexture(texture, image.pixels, image.w, image.h);
+		AImg_DestroyImage(&image);
+	}
+	
+}
+
+LX_Texture TextureServer::doLoad(const std::string &key){	
 	AImg_Image image;
 	LX_Texture texture;
 	texture.value = 0;
 	
-	if(!Lantern_InitFileFinder(finder, image_dir.c_str())){
-		
-		fputs("Could not find images directory.\n", stderr);
-		fflush(stderr);
-		
+	const std::string path = std::string("textures/") + key;
+	if(AImg_LoadAuto(&image, path.c_str()) == AIMG_LOADPNG_SUCCESS){
+		texture = LX_CreateTexture();
+		LX_UploadTexture(texture, image.pixels, image.w, image.h);
+		AImg_DestroyImage(&image);
 	}
-	else{
+	else if(key.length() < 0x100 && texture.value == 0){
+		Lantern_ArchiveEntry entry;
+		Lantern_Archive archive;
+		std::copy(key.begin(), key.end(), entry.name);
 		
-		do{
-			if(Lantern_FileFinderFileSize(finder) < 64)
-				continue;
+		if(m_archive_server.findFile(entry, archive)){
+			const char tga[] = "agt.", *const tga_end = tga + sizeof(tga),
+				png[] = "gnp.", *const png_end = png + sizeof(png);
 			
-			const char *const path = Lantern_FileFinderPath(finder);
-			if(key == path + image_dir.length()){
-				const unsigned err = AImg_LoadAuto(&image, path);
-				if(err != AIMG_LOADPNG_SUCCESS){
-					fprintf(stderr, "Error %i loading ", err);
-					fputs(key.c_str(), stderr);
-					fputc('\n', stderr);
-				}
-				else{
-					texture = LX_CreateTexture();
-					LX_UploadTexture(texture, image.pixels, image.w, image.h);
-				}
-				
-				break;
+			if(std::mismatch(tga, tga_end, key.rbegin()).first == tga_end){
+				const unsigned err =
+					AImg_LoadTGAMem(&image, (uint8_t*)archive.data + entry.start, entry.length);
+				doTextureGenerate(key, err, image, texture);
 			}
-			
-		}while(Lantern_FileFinderNext(finder));
-		
+			else if(std::mismatch(png, png_end, key.rbegin()).first == png_end){
+				const unsigned err =
+					AImg_LoadPNGMem(&image, (uint8_t*)archive.data + entry.start, entry.length);
+				doTextureGenerate(key, err, image, texture);
+			}
+		}
 	}
 	
-	Lantern_DestroyFileFinder(finder);
 	return texture;
 }
 

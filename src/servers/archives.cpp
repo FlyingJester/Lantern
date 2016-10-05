@@ -1,7 +1,6 @@
 #include "archives.hpp"
 
 #include <utility>
-#include <cstdio>
 
 namespace Lantern {
 
@@ -57,8 +56,19 @@ bool ArchiveServer::FindFirstMatchCallback(void *LANTERN_RESTRICT arg,
 }
 
 // The file name should be filled in on the entry when this is called. Returns false if no matching path is found.
-bool ArchiveServer::findFile(struct Lantern_ArchiveEntry &in_out_entry) const {
-	(void)in_out_entry;
+bool ArchiveServer::findFile(Lantern_ArchiveEntry &in_out_entry, Lantern_Archive &archive) const {
+	
+	for(std::vector<Lantern_Archive>::const_iterator iter = m_archives.begin(); iter != m_archives.end(); iter++){
+		const Lantern_Archive &arch = *iter;
+		Lantern_ArchiveSearch(&arch, &in_out_entry, 1);
+		
+		if(in_out_entry.start != LANTERN_ARCHIVE_INVALID_SIZE &&
+			in_out_entry.length != LANTERN_ARCHIVE_INVALID_SIZE){
+			archive = arch;
+			return true;
+		}
+	}
+	
 	return false;
 }
 
@@ -90,8 +100,6 @@ bool ArchiveServer::findFirstMatch(Lantern_ArchiveEntry &entry, Lantern_Archive 
 }
 
 ArchiveServer *Lantern_CreateArchiveServer(){
-    puts("Creating archive manager");
-    fflush(stdout);
 	return new ArchiveServer();
 }
 
@@ -100,8 +108,6 @@ void Lantern_DestroyArchiveServer(ArchiveServer *server){
 }
 
 void Lantern_AppendToArchiveServer(ArchiveServer *server, const void *data, unsigned long size){
-    printf("Appending file  @%p(%i) to archive manager\n", data, size);
-    fflush(stdout);
 	Lantern_Archive archive;
 	archive.data = data;
 	archive.size = size;

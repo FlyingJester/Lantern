@@ -8,7 +8,7 @@
 namespace Lantern {
 
 class ArchiveServer {
-	std::vector<struct Lantern_Archive> m_archives;
+	std::vector<Lantern_Archive> m_archives;
 	
 	static bool FindFirstMatchCallback(void *LANTERN_RESTRICT arg,
 		const struct Lantern_Archive *LANTERN_RESTRICT archive,
@@ -19,7 +19,7 @@ public:
 	inline void append(const struct Lantern_Archive &archive) { m_archives.push_back(archive); }
 	
 	// The file name should be filled in on the entry when this is called. Returns false if no matching path is found.
-	bool findFile(struct Lantern_ArchiveEntry &in_out_entry) const;
+	bool findFile(struct Lantern_ArchiveEntry &in_out_entry, Lantern_Archive &archive) const;
 	
 	// Fills out the entry for the first file which the callback returns true on. Returns false if no files match.
 	// Notably, this means the callback's return value is the opposite of what would be used for Lantern_EnumerateArchive.
