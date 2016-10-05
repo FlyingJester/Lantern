@@ -1,0 +1,13 @@
+Import("environment bufferfile")
+import os
+import sys
+
+if sys.platform == "msys" or sys.platform == "cygwin" or os.name == "posix":
+	environment.Append(CFLAGS = " -Wno-sign-compare -Wno-maybe-uninitialized -Wno-clobbered ")
+
+environment.Append(CPPDEFINES = "AIMG_EXPORTS=1")
+
+result = environment.SharedLibrary("aimg", ["aimage.c", "load_tga.c", "load_png.c", "save_tga.c", "save_png.c"], LIBS = [bufferfile, "png"])
+aimg = [result[1], result[0]]
+
+Return("aimg")

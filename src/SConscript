@@ -1,0 +1,59 @@
+Import("environment libs is32bit mingw")
+import os
+import sys
+
+src = [
+    "game.cpp",
+    "item.cpp",
+    "lantern.cpp",
+    "primitives.c",
+    "room.cpp",
+    "cpio.c",
+    "lantern_gl.c",
+    "lantern_gl_ext.c",
+    "turbo_json_helpers.cpp"
+]
+
+servers = [
+	"texture",
+	"room",
+	"item",
+	"archive"
+]
+
+for s in servers:
+	src.append("servers/" + s + "s.cpp")
+
+asm_src = []
+
+if mingw or os.name == "nt":
+	if is32bit:
+		src.append("init_win32.asm")
+		src.append("archive_server.c")
+	else:
+		src.append("init_win64.asm")
+		src.append("archive_server_win64.asm")
+else:
+	src.append("archive_server.c")
+	if is32bit:
+		src.append("init_sysv32.asm")
+	else:
+		src.append("init_sysv64.asm")
+
+if os.name == "nt" or mingw:
+	libs.append("OpenGL32")
+	src.append("fileops_win32.c")
+	if not mingw:
+		libs+=["GDI32.lib", "user32.lib"]
+else:
+	libs.append("GL")
+	src.append("fileops_unix.c")
+	
+lantern = environment.Program("lantern", src, LIBS = libs)
+
+cpio_env = environment.Clone()
+if mingw:
+	cpio_env.Append(LINKFLAGS = " -static ")
+cpio = cpio_env.Program("lanterncpio", ["cpio_main.cpp"])
+
+Return("lantern")

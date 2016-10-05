@@ -1,0 +1,22 @@
+# Import("environment")
+
+environment = Environment()
+
+no_mmap = False
+
+bufferfile = {}
+
+l_env = environment.Clone()
+
+configure = Configure(l_env)
+
+if not no_mmap and configure.CheckCHeader("sys/mman.h"):
+    bufferfile = environment.StaticLibrary("bufferfile", ["bufferfile_mmap.c"])
+elif configure.CheckCHeader("unistd.h") and configure.CheckCHeader("sys/stat.h"):
+    bufferfile = environment.StaticLibrary("bufferfile", ["bufferfile_unix.c"])
+else:
+    bufferfile = environment.StaticLibrary("bufferfile", ["bufferfile_c.c"])
+
+l_env = configure.Finish()
+
+Return("bufferfile")

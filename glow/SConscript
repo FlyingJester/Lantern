@@ -1,0 +1,13 @@
+Import("environment")
+import os
+import sys
+
+if os.name == "nt" or sys.platform == "msys":
+	src = ["glow_win32.c"]
+	libglow = environment.StaticLibrary("glow", ["glow_win32.c"], LIBS = ["OpenGL32", "gdi32"])
+elif "be" in sys.platform or sys.platform.startswith("haiku"):
+	libglow = environment.StaticLibrary("glow", ["glow_haiku.cpp"], LIBS = ["be", "gl"])
+else:
+	libglow = environment.StaticLibrary("glow", ["glow_x11.c"], LIBS = ["X11", "Xext"])
+
+Return("libglow")
