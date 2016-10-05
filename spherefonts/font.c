@@ -1,15 +1,9 @@
 #include "font.h"
 #include "cynical.inc"
 #include <string.h>
-#include <stdio.h>
 #include <assert.h>
 
-#ifdef _WIN32
-#include <Windows.h>
-#endif
-#include "GL/gl.h"
-
-bool LoadFontMem(struct Sphere_Font *to, const uint32_t *mem, const uint64_t size){
+bool Sphere_LoadFontMem(struct Sphere_Font *to, const uint32_t *mem, const uint64_t size){
 	assert(to);
 	
 	if(size < 64)
@@ -97,14 +91,10 @@ bool LoadFontMem(struct Sphere_Font *to, const uint32_t *mem, const uint64_t siz
 		to->texture = texture;
 	}
 	
-	glBindTexture(GL_TEXTURE_2D, to->texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, to->master.w, to->master.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, to->master.data);
-	glFinish();
-	glBindTexture(GL_TEXTURE_2D, 0);
 	return true;
 }
 
-uint64_t StringWidth(const struct Sphere_Font *font, const char *str, uint16_t n){
+uint64_t Sphere_StringWidth(const struct Sphere_Font *font, const char *str, uint16_t n){
 	unsigned i = 0, width = 0;
 	assert(font);
 	while(i < n){
@@ -112,10 +102,11 @@ uint64_t StringWidth(const struct Sphere_Font *font, const char *str, uint16_t n
 		width += glyph->w;
 		i++;
 	}
+    
 	return width;
 }
 
-const struct Sphere_Glyph *GetBoundedGlyph(const struct Sphere_Font *font, unsigned i){
+const struct Sphere_Glyph *Sphere_GetBoundedGlyph(const struct Sphere_Font *font, unsigned i){
 	assert(font);
 	if(i > 0xFF || i < 0x0F)
 		return font->glyphs + (int)' ';
@@ -124,7 +115,7 @@ const struct Sphere_Glyph *GetBoundedGlyph(const struct Sphere_Font *font, unsig
 }
 
 static struct Sphere_Font system_font_z, *system_font = NULL;
-const struct Sphere_Font *GetSystemFont(){
+const struct Sphere_Font *Sphere_GetSystemFont(){
 	if(!system_font){
 		system_font = &system_font_z;
 		LoadFontMem(system_font, (uint32_t *)res_fonts_cynical_rfn, res_fonts_cynical_rfn_len);

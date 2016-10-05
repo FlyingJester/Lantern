@@ -1,4 +1,5 @@
 #include "primitives.h"
+#include "primitives_low.h"
 #include "lantern_gl.h"
 
 #include <assert.h>
@@ -11,13 +12,6 @@ const float rectangle_uv[16] = {
 };
 
 LX_Buffer global_uv_buffer;
-
-struct Lantern_Primitive{
-	LX_Buffer vbo;
-	unsigned length;
-	enum LX_DrawType type;
-	LX_Texture texture;
-};
 
 unsigned Lantern_PrimitiveSize(){
 	return sizeof(struct Lantern_Primitive);
@@ -51,23 +45,20 @@ void Lantern_DestroyPrimitive(struct Lantern_Primitive *primitive){
 
 void Lantern_CreateRectangle(struct Lantern_Primitive *primitive, unsigned w, unsigned h, LX_Texture tex){
 
-	float data[8] = {
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		1.0f, 1.0f,
-		0.0f, 1.0f
-	};
-	
-	data[2] = data[4] = w;
-	data[5] = data[7] = h;
+    RECTANGLE_COORDS(data, 0, 0, w, h);
 	
 	LX_UploadBuffer(primitive->vbo, data, sizeof(data));
 	primitive->length = 4;
 	primitive->texture.value = tex.value;
 }
 
+void Lantern_DrawPrimitiveLow(LX_Buffer vertex, LX_Buffer tex_coord, unsigned length, enum LX_DrawType type);
+	LX_SetVertexBuffer(vertex);
+	LX_SetTexCoordBuffer(tex_coord);
+	LX_DrawArrays(type, length);
+}
+
 void Lantern_DrawPrimitive(const struct Lantern_Primitive *primitive){
-	LX_SetVertexBuffer(primitive->vbo);
-	LX_SetTexCoordBuffer(global_uv_buffer);
-	LX_DrawArrays(primitive->type, primitive->length);
+    LX_SetTexture(primitive->texture);
+    Lantern_DrawPrimitiveLow(primitive->vbo, global_uv_buffer, primitive->length, primitive->type);
 }
