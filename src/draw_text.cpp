@@ -99,7 +99,7 @@ void TextLine::assign(const struct Sphere_Font *font, const char *text, unsigned
 void TextLine::draw(){
     for(std::vector<Lantern_Primitive>::const_iterator i = m_letters.begin();
         i != m_letters.end(); i++){
-        Lantern_DrawPrimitiveLow(i->vertex, i->tex_coord, i->length, i->type);
+        Lantern_DrawPrimitiveLow(i->vertex, i->tex_coord, 4, eLX_Fan);
     }
 }
 
