@@ -52,7 +52,7 @@ void Lantern_CreateRectangle(struct Lantern_Primitive *primitive, unsigned w, un
 	primitive->texture.value = tex.value;
 }
 
-void Lantern_DrawPrimitiveLow(LX_Buffer vertex, LX_Buffer tex_coord, unsigned length, enum LX_DrawType type);
+void Lantern_DrawPrimitiveLow(LX_Buffer vertex, LX_Buffer tex_coord, unsigned length, enum LX_DrawType type){
 	LX_SetVertexBuffer(vertex);
 	LX_SetTexCoordBuffer(tex_coord);
 	LX_DrawArrays(type, length);

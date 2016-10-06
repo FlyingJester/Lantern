@@ -1,22 +1,20 @@
-# Import("environment")
+import os
 
-environment = Environment()
+Import("environment")
 
-no_mmap = False
+conf = environment.Configure()
 
-bufferfile = {}
-
-l_env = environment.Clone()
-
-configure = Configure(l_env)
-
-if not no_mmap and configure.CheckCHeader("sys/mman.h"):
-    bufferfile = environment.StaticLibrary("bufferfile", ["bufferfile_mmap.c"])
-elif configure.CheckCHeader("unistd.h") and configure.CheckCHeader("sys/stat.h"):
-    bufferfile = environment.StaticLibrary("bufferfile", ["bufferfile_unix.c"])
+if os.name != "nt" and conf.CheckCHeader("sys/mman.h"):
+    src = "bufferfile_mmap.c"
+elif os.name != "nt" and conf.CheckCHeader("unistd.h") and conf.CheckCHeader("sys/stat.h"):
+    src = "bufferfile_unix.c"
+elif os.name == "nt" or sys.platform == "msys" or sys.platform == "cygwin":
+    src = "bufferfile_win32.c"
 else:
-    bufferfile = environment.StaticLibrary("bufferfile", ["bufferfile_c.c"])
+    src = "bufferfile_c.c"
 
-l_env = configure.Finish()
+environment = conf.Finish()
 
-Return("bufferfile")
+libbufferfile = environment.StaticLibrary("bufferfile", [src])
+
+Return("libbufferfile")

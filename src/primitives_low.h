@@ -17,7 +17,7 @@ void Lantern_DrawPrimitiveLow(LX_Buffer vertex, LX_Buffer tex_coord, unsigned le
 
 #define RECTANGLE_COORDS(NAME, X, Y, W, H)\
 	float NAME[8];\
-    data[1] = data[3] = (Y);\
-    data[0] = data[6] = (X);\
-	data[2] = data[4] = (X)+(W);\
-	data[5] = data[7] = (Y)+(H)
+    NAME[1] = NAME[3] = (Y);\
+    NAME[0] = NAME[6] = (X);\
+	NAME[2] = NAME[4] = (X)+(W);\
+	NAME[5] = NAME[7] = (Y)+(H)

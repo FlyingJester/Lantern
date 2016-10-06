@@ -1,5 +1,6 @@
 #include "font.h"
 #include "cynical.inc"
+#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
@@ -85,12 +86,6 @@ bool Sphere_LoadFontMem(struct Sphere_Font *to, const uint32_t *mem, const uint6
 		
 	}
 	
-	{
-		GLuint texture;
-		glGenTextures(1, &texture);
-		to->texture = texture;
-	}
-	
 	return true;
 }
 
@@ -98,7 +93,7 @@ uint64_t Sphere_StringWidth(const struct Sphere_Font *font, const char *str, uin
 	unsigned i = 0, width = 0;
 	assert(font);
 	while(i < n){
-		const struct Sphere_Glyph *const glyph = GetBoundedGlyph(font, str[i]);
+		const struct Sphere_Glyph *const glyph = Sphere_GetBoundedGlyph(font, str[i]);
 		width += glyph->w;
 		i++;
 	}
@@ -118,7 +113,7 @@ static struct Sphere_Font system_font_z, *system_font = NULL;
 const struct Sphere_Font *Sphere_GetSystemFont(){
 	if(!system_font){
 		system_font = &system_font_z;
-		LoadFontMem(system_font, (uint32_t *)res_fonts_cynical_rfn, res_fonts_cynical_rfn_len);
+		Sphere_LoadFontMem(system_font, (uint32_t *)res_fonts_cynical_rfn, res_fonts_cynical_rfn_len);
 	}
 	
 	return system_font;

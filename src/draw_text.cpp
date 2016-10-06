@@ -16,10 +16,10 @@ struct Letter {
     Letter() : vertex(LX_CreateBuffer()), tex_coord(LX_CreateBuffer()) { }
 
     ~Letter() {
-        LX_Destroy(vertex);
-        LX_Destroy(tex_coord);
+        LX_DestroyBuffer(vertex);
+        LX_DestroyBuffer(tex_coord);
     }
-}
+};
 
 class TextLine {
     std::vector<Letter> m_letters;
@@ -63,7 +63,7 @@ public:
     
     void draw() const;
     void assign(const struct Sphere_Font *font, const char *text, unsigned x, unsigned y);
-}
+};
 
 class Text {
     std::vector<TextLine> m_text;
@@ -83,7 +83,7 @@ public:
     }
     
     inline void clear() { m_text.clear(); }
-}
+};
 
 void TextLine::assign(const struct Sphere_Font *font, const char *text, unsigned x, unsigned y){
     const unsigned i = strlen(text);
@@ -96,14 +96,14 @@ void TextLine::assign(const struct Sphere_Font *font, const char *text, unsigned
     std::for_each(text, text + i, appender);
 }
 
-void TextLine::draw(){
-    for(std::vector<Lantern_Primitive>::const_iterator i = m_letters.begin();
+void TextLine::draw() const {
+    for(std::vector<Letter>::const_iterator i = m_letters.begin();
         i != m_letters.end(); i++){
         Lantern_DrawPrimitiveLow(i->vertex, i->tex_coord, 4, eLX_Fan);
     }
 }
 
-void Text::draw(){
+void Text::draw() const {
     LX_SetTexture(m_texture);
     for(std::vector<TextLine>::const_iterator i = m_text.begin();
         i != m_text.end(); i++){

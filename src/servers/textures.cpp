@@ -2,7 +2,7 @@
 
 #include "src/fileops.h"
 
-#include "aimg/aimage.h"
+#include "aimg/image.h"
 
 #include <algorithm>
 #include <cstdio>
