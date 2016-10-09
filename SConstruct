@@ -88,7 +88,7 @@ for name in libnames:
         for r in result:
             if str(r).endswith(".dll"):
                 rlibs[1] = r
-            elif str(r).endswith(".a") or r.endswith(".lib"):
+            elif str(r).endswith(".a") or str(r).endswith(".lib"):
                 rlibs[0] = r
 
         Install(os.path.join(os.getcwd(), "lantern"), rlibs[1])

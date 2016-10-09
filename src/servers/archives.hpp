@@ -32,8 +32,8 @@ public:
 	
 };
 
-extern "C" LANTERN_FASTCALL ArchiveServer *Lantern_CreateArchiveServer();
-extern "C" LANTERN_FASTCALL void Lantern_DestroyArchiveServer(ArchiveServer *server);
-extern "C" LANTERN_FASTCALL void Lantern_AppendToArchiveServer(ArchiveServer *server, const void *data, unsigned long size);
+extern "C" ArchiveServer *Lantern_CreateArchiveServer();
+extern "C" void Lantern_DestroyArchiveServer(ArchiveServer *server);
+extern "C" void Lantern_AppendToArchiveServer(ArchiveServer *server, const void *data, unsigned long size);
 
 } // namespace Lantern

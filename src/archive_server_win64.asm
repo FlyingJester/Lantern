@@ -108,6 +108,7 @@ do_archive:
     
     ; Archive server is first arg
     mov rcx, QWORD archive_server
+    mov rcx, QWORD [rcx]
     
     ; Put the data pointer into the second arg for the append call
     mov rdx, rax
