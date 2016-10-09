@@ -93,7 +93,7 @@ void LX_DisableDepthTest(){
 }
 
 void LX_EnableBlending(){
-	glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	assert(glGetError() == GL_NO_ERROR);
 }

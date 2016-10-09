@@ -59,7 +59,7 @@ static LRESULT WINAPI glow_window_proc(HWND wnd, UINT msg, WPARAM parm, LPARAM l
 		SetPixelFormat(window->dc, let, &glow_pixel_format);
 		window->ctx = wglCreateContext(window->dc);
 		wglMakeCurrent(window->dc, window->ctx);
-		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClearColor(0.75, 0.333, 0.0, 1.0);
 		return 0;
 	}
 	else if(msg == WM_SHOWWINDOW){
