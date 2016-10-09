@@ -49,6 +49,7 @@ void Lantern_CreateRectangle(struct Lantern_Primitive *primitive, unsigned w, un
 	
 	LX_UploadBuffer(primitive->vbo, data, sizeof(data));
 	primitive->length = 4;
+    primitive->type = eLX_Fan;
 	primitive->texture.value = tex.value;
 }
 
@@ -58,7 +59,14 @@ void Lantern_DrawPrimitiveLow(LX_Buffer vertex, LX_Buffer tex_coord, unsigned le
 	LX_DrawArrays(type, length);
 }
 
-void Lantern_DrawPrimitive(const struct Lantern_Primitive *primitive){
+void Lantern_DrawPrimitive(const struct Lantern_Primitive *primitive, unsigned x, unsigned y){
     LX_SetTexture(primitive->texture);
+
+    LX_PushMatrix();
+    LX_Translate(x, y);
+
     Lantern_DrawPrimitiveLow(primitive->vbo, global_uv_buffer, primitive->length, primitive->type);
+
+    LX_PopMatrix();
+
 }

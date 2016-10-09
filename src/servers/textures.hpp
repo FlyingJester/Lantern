@@ -10,14 +10,20 @@ struct AImg_Image;
 
 namespace Lantern {
 
-class TextureServer : public ResourceServer<std::string, LX_Texture> {
+struct Image {
+    LX_Texture texture;
+    unsigned w, h;
+};
+
+class TextureServer : public ResourceServer<std::string, Image> {
 	const ArchiveServer &m_archive_server;
-	static void doTextureGenerate(const std::string &key, unsigned img_err, AImg_Image &image, LX_Texture &to); 
+	static void doTextureGenerate(const std::string &key, unsigned img_err, AImg_Image &image, Image &to);
 public:
 	TextureServer(const ArchiveServer &archive_server) : m_archive_server(archive_server) { }
 protected:
-	virtual LX_Texture doLoad(const std::string&);
-	virtual void finalize(std::map<std::string, LX_Texture>::iterator i) { LX_DestroyTexture(i->second); }
+	virtual Image doLoad(const std::string&);
+	virtual void finalize(std::map<std::string, Image>::iterator i) { LX_DestroyTexture(i->second.texture); }
+
 };
 
 } // namespace Lantern

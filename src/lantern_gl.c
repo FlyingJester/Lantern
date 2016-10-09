@@ -11,6 +11,10 @@ void LX_UploadTexture(LX_Texture texture, const void *pixels, unsigned w, unsign
 	assert(glGetError() == GL_NO_ERROR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 	assert(glGetError() == GL_NO_ERROR);
+    glFinish();
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
 LX_Texture LX_CreateTexture(){
@@ -72,7 +76,7 @@ void LX_SetTexture(LX_Texture x){
 #define CLIENT_STATE(X, Z, N, T)\
 void LX_Enable ## X ## Buffer(){ glEnableClientState(GL_ ## Z ## _ARRAY); assert(glGetError() == GL_NO_ERROR); }\
 void LX_Disable ## X ## Buffer(){ glDisableClientState(GL_ ## Z ## _ARRAY); assert(glGetError() == GL_NO_ERROR); }\
-void LX_Set ## X ## Buffer(LX_Buffer b){ lxBindBuffer(GL_ ## Z ## _ARRAY, b.value); assert(glGetError() == GL_NO_ERROR); gl ## X ## Pointer(N, GL_ ## T, 0, NULL); assert(glGetError() == GL_NO_ERROR); }
+void LX_Set ## X ## Buffer(LX_Buffer b){ lxBindBuffer(GL_ARRAY_BUFFER, b.value); assert(glGetError() == GL_NO_ERROR); gl ## X ## Pointer(N, GL_ ## T, 0, NULL); assert(glGetError() == GL_NO_ERROR); }
 
 CLIENT_STATE(Vertex, VERTEX, 2, FLOAT)
 CLIENT_STATE(TexCoord, TEXTURE_COORD, 2, FLOAT)
@@ -125,4 +129,24 @@ void LX_DrawArrays(enum LX_DrawType type, unsigned num_vertices){
 		glDrawArrays(lx_get_gl_draw_type(type), 0, num_vertices);
 		assert(glGetError() == GL_NO_ERROR);
 	}
+}
+
+void LX_Ortho(float width, float height) {
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, width, height, 0, -1.0, 1.0);
+}
+
+void LX_PushMatrix() {
+    glPushMatrix();
+}
+
+void LX_Translate(float x, float y) {
+    glTranslatef(x, y, 0.0f);
+}
+
+void LX_PopMatrix(){
+    glPopMatrix();
 }

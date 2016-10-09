@@ -39,15 +39,16 @@ class TextLine {
         }
         
         void operator() (char c){
-            m_letters.resize(m_letters.size());
             
+            m_letters.resize(m_letters.size() + 1);
+
             const Sphere_Glyph *const glyph = Sphere_GetBoundedGlyph(m_font, (unsigned)c);
             
             RECTANGLE_COORDS(vertex, m_x, m_y, glyph->w, glyph->h);
             RECTANGLE_COORDS(tex_coord,
                 static_cast<float>(glyph->x) / static_cast<float>(m_font->master.w),
                 0.0f,
-                static_cast<float>(glyph->x + glyph->x) / static_cast<float>(m_font->master.w),
+                static_cast<float>(glyph->w) / static_cast<float>(m_font->master.w),
                 static_cast<float>(glyph->h) / static_cast<float>(m_font->master.h)
             );
             
@@ -67,14 +68,19 @@ public:
 
 class Text {
     std::vector<TextLine> m_text;
-    LX_Texture m_texture;
+    const LX_Texture m_texture;
     const struct Sphere_Font *const m_font;
 public:
     Text(const struct Sphere_Font *font)
-      : m_font(font){
-        
+      : m_font(font)
+      , m_texture(LX_CreateTexture()){
+        LX_UploadTexture(m_texture, font->master.data, font->master.w, font->master.h);
     }
     
+    ~Text() {
+        LX_DestroyTexture(m_texture);
+    }
+
     void draw() const;
     
     inline void append(const char *text, unsigned x, unsigned y){
@@ -127,7 +133,7 @@ void Lantern_AddTextToFontContext(
     struct Lantern_FontContext *LANTERN_RESTRICT ctx,
     const char *LANTERN_RESTRICT text, 
     unsigned x, unsigned y){
-    
+    ((Text *)ctx)->append(text, x, y);
 }
 
 void Lantern_DrawFontContext(const struct Lantern_FontContext *ctx){

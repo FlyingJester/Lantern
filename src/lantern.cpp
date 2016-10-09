@@ -2,7 +2,10 @@
 #include "lantern_gl_ext.h"
 #include "lantern_attributes.h"
 
+#include "draw_text.h"
+
 #include "servers/archives.hpp"
+#include "servers/textures.hpp"
 
 #include "spherefonts/font.h"
 
@@ -44,26 +47,42 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
 	
     printf("Got window %p and archive server %p\n", window, archive_server);
     fflush(stdout);
-	
+    LX_Ortho(400, 320);
+    LX_EnableBlending();
+    LX_EnableTexture();
+
+    Lantern::TextureServer texture_server(*archive_server);
+
+    Lantern::Image glider = texture_server.load("glider_mask.png");
+
+    Lantern_FontContext *const ctx = Lantern_CreateFontContext();
+    Lantern_Primitive *const im = (Lantern_Primitive*)malloc(Lantern_PrimitiveSize());
+    Lantern_InitPrimitive(im);
+    Lantern_CreateRectangle(im, glider.w, glider.h, glider.texture);
+
+    Lantern_AddTextToFontContext(ctx, "This is some text.", 16, 16);
+    
     Glow_Event event;
     event.type = eGlowUnknown;
-    
     
     do {
         lantern_frame_delay();
         
         // Draw Scene
+        Lantern_DrawFontContext(ctx);
+        Lantern_DrawPrimitive(im, 64, 64);
         
         Glow_FlipScreen(window);
         // Get Events
         while(Glow_GetEvent(window, &event)){
             
             
-            
         }
         // Handle Event
         
     } while(event.type != eGlowQuit);
+    
+    Lantern_DestroyFontContext(ctx);
     
 	Lantern_End(window);
 	return EXIT_SUCCESS;

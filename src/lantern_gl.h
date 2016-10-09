@@ -47,6 +47,11 @@ LX_ENABLEABLE(Blending);
 enum LX_DrawType { eLX_Fan, eLX_Strip, eLX_Quads, eLX_LineLoop, eLX_Points };
 void LX_DrawArrays(enum LX_DrawType type, unsigned num_vertices);
 
+void LX_Ortho(float width, float height);
+void LX_PushMatrix();
+void LX_Translate(float x, float y);
+void LX_PopMatrix();
+
 #ifdef __cplusplus
 }
 #endif

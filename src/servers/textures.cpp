@@ -16,7 +16,7 @@
 namespace Lantern {
 
 void TextureServer::doTextureGenerate(const std::string &key,
-	unsigned img_err, AImg_Image &image, LX_Texture &texture){
+	unsigned img_err, AImg_Image &image, Image &to){
 	
 	if(img_err != AIMG_LOADPNG_SUCCESS){
 		fprintf(stderr, "Error %i loading ", img_err);
@@ -24,25 +24,29 @@ void TextureServer::doTextureGenerate(const std::string &key,
 		fputc('\n', stderr);
 	}
 	else{
-		texture = LX_CreateTexture();
-		LX_UploadTexture(texture, image.pixels, image.w, image.h);
-		AImg_DestroyImage(&image);
+        to.texture = LX_CreateTexture();
+		LX_UploadTexture(to.texture, image.pixels, image.w, image.h);
+        to.w = image.w;
+        to.h = image.h;
+        AImg_DestroyImage(&image);
 	}
 	
 }
 
-LX_Texture TextureServer::doLoad(const std::string &key){	
+Image TextureServer::doLoad(const std::string &key){
 	AImg_Image image;
-	LX_Texture texture;
-	texture.value = 0;
+    Image texture;
+    texture.texture.value = 0;
 	
 	const std::string path = std::string("textures/") + key;
 	if(AImg_LoadAuto(&image, path.c_str()) == AIMG_LOADPNG_SUCCESS){
-		texture = LX_CreateTexture();
-		LX_UploadTexture(texture, image.pixels, image.w, image.h);
+        texture.texture = LX_CreateTexture();
+		LX_UploadTexture(texture.texture, image.pixels, image.w, image.h);
+        texture.w = image.w;
+        texture.h = image.h;
 		AImg_DestroyImage(&image);
 	}
-	else if(key.length() < 0x100 && texture.value == 0){
+	else if(key.length() < 0x100 && texture.texture.value == 0){
 		Lantern_ArchiveEntry entry;
 		Lantern_Archive archive;
 		std::copy(key.begin(), key.end(), entry.name);
