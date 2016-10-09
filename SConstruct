@@ -78,7 +78,7 @@ base = environment.Clone()
 bufferfile = SConscript(dirs = ["bufferfile"], exports = ["environment"])
 environment = base.Clone()
 
-libnames = ["dlcl", "turbojson", "glow", "aimg", "spherefonts"]
+libnames = ["dlcl", "turbojson", "glow", "aimg", "spherefonts", "chrono"]
 libs = [bufferfile]
 
 for name in libnames:
