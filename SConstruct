@@ -45,7 +45,7 @@ if is32bit:
 	if mingw or os.name == "posix":
 		environment.Append(ASFLAGS = " -f elf ")
 	elif os.name == "nt":
-		environment.Append(ASFLAGS = " -f win32 ")
+		environment.Append(ASFLAGS = " -f win32 -d win32 ")
 	else:
 		print ("Add the asm init routines for your platform!")
 		quit()
@@ -56,7 +56,7 @@ else:
 	if mingw or os.name == "posix":
 		environment.Append(ASFLAGS = " -f elf64 -m amd64 ")
 	elif os.name == "nt":
-		environment.Append(ASFLAGS = " -f win64 ")
+		environment.Append(ASFLAGS = " -f win64 -d win64 ")
 	else:
 		print ("Add the asm init routines for your platform!")
 		quit()

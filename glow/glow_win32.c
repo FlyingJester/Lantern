@@ -63,12 +63,15 @@ static LRESULT WINAPI glow_window_proc(HWND wnd, UINT msg, WPARAM parm, LPARAM l
 		return 0;
 	}
 	else if(msg == WM_SHOWWINDOW){
-		ShowWindow(wnd, SW_SHOWNORMAL);
+        if(parm == FALSE)
+            PostQuitMessage(EXIT_SUCCESS);
+        else
+            ShowWindow(wnd, SW_SHOWNORMAL);
 		return 0;
 	}
-	else if(msg == WM_CLOSE){
+	else if(msg == WM_CLOSE || msg == WM_DESTROY){
 		PostQuitMessage(EXIT_SUCCESS);
-		return DefWindowProc(wnd, msg, parm, lparam);
+        return 0;
 	}
 	else{
 		return DefWindowProc(wnd, msg, parm, lparam);
@@ -78,7 +81,7 @@ static LRESULT WINAPI glow_window_proc(HWND wnd, UINT msg, WPARAM parm, LPARAM l
 int WINAPI WinMain(HINSTANCE app, HINSTANCE prev, LPSTR cmdline, int showcmd){
 
 	WNDCLASS wc = {
-		CS_OWNDC | CS_NOCLOSE,
+		CS_OWNDC,
 		glow_window_proc,
 		0,
 		0,
@@ -126,8 +129,11 @@ struct Glow_Window *Glow_CreateWindow(unsigned w, unsigned h, const char *title,
 		RegisterClass(&wc);
 	}
 
-	window->win = CreateWindow(GLOW_CLASS_NAME, title, WS_BORDER | WS_CAPTION, 64, 64, w, h, NULL, NULL, glow_app, window);
-	
+    {
+        const DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_BORDER | WS_MINIMIZEBOX | WS_SYSMENU; 
+        window->win = CreateWindow(GLOW_CLASS_NAME, title, style, 64, 64, w, h, NULL, NULL, glow_app, window);
+	}
+    
 	return window;
 }
 

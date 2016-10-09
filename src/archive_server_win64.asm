@@ -182,13 +182,14 @@ create_end:
 lantern_low_destroy_global_archive:
 	push r15
 	mov rcx, QWORD archive_server
+    mov rcx, [rcx]
     ; TODO: WTF is happening here?
-;	call Lantern_DestroyArchiveServer
+	call Lantern_DestroyArchiveServer
     
     mov rax, QWORD num_archives
     mov r15, QWORD [rax]
-    cmp r15, 0
-    je end_destroy
+    test r15, r15
+    jz end_destroy
     
     dec r15
     shl r15, ARCHIVE_SIZE_SHL
@@ -198,6 +199,7 @@ lantern_low_destroy_global_archive:
 free_buffer_file:
     mov rcx, r15
     add rcx, ArchiveData.filedata
+    
     mov rdx, r15
     add rcx, ArchiveData.filesize
     
