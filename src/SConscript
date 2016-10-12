@@ -48,7 +48,7 @@ if os.name == "nt" or mingw:
 		libs+=["GDI32.lib", "user32.lib"]
 else:
 	libs.append("GL")
-	src.append("fileops_unix.c")
+	src.append("fileops_posix.c")
 	
 lantern = environment.Program("lantern", src, LIBS = libs)
 
