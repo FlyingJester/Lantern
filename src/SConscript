@@ -48,7 +48,10 @@ if os.name == "nt" or mingw:
 		libs+=["GDI32.lib", "user32.lib"]
 else:
 	libs.append("GL")
-	src.append("fileops_posix.c")
+	if "haiku" in sys.platform.lower():
+		src.append("fileops_haiku.cpp")
+	ekse:
+		src.append("fileops_posix.c")
 	
 lantern = environment.Program("lantern", src, LIBS = libs)
 
