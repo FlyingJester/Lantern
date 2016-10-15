@@ -15,6 +15,8 @@ void Lantern_InitPrimitive(struct Lantern_Primitive *primitive);
 void Lantern_DestroyPrimitive(struct Lantern_Primitive *primitive);
 
 void Lantern_CreateRectangle(struct Lantern_Primitive *primitive, unsigned w, unsigned h, LX_Texture tex);
+void Lantern_CreateLine(struct Lantern_Primitive *primitive,
+    unsigned x0, unsigned y0, unsigned x1, unsigned y1, LX_Texture tex);
 void Lantern_CreateUVRectangle(struct Lantern_Primitive *primitive, unsigned w, unsigned h, LX_Texture tex);
 void Lantern_DrawPrimitive(const struct Lantern_Primitive *primitive, unsigned x, unsigned y);
 

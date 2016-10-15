@@ -1,6 +1,6 @@
 #include "textures.hpp"
 
-#include "src/fileops.h"
+#include "fileops/fileops.h"
 
 #include "aimg/image.h"
 

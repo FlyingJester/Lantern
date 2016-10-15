@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lantern_attributes.h"
+#include "src/lantern_attributes.h"
 
 #include <stdbool.h>
 

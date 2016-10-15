@@ -53,7 +53,7 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
 
     Lantern::TextureServer texture_server(*archive_server);
 
-    Lantern::Image glider = texture_server.load("glider_mask.png");
+    Lantern::Image glider = texture_server.load("windowstyle.tga");
 
     Lantern_FontContext *const ctx = Lantern_CreateFontContext();
     Lantern_Primitive *const im = (Lantern_Primitive*)malloc(Lantern_PrimitiveSize());
