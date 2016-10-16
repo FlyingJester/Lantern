@@ -3,7 +3,7 @@
 #include "lantern_gl.h"
 
 struct Lantern_Primitive{
-	LX_Buffer vbo;
+	LX_Buffer vbo, tex_coord;
 	unsigned length;
 	enum LX_DrawType type;
 	LX_Texture texture;

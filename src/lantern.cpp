@@ -21,6 +21,10 @@ extern "C" int Lantern_Start();
 
 extern "C" LANTERN_FASTCALL int Lantern_End(struct Glow_Window *window);
 
+namespace Lantern {
+extern const unsigned ScreenWidth, ScreenHeight;
+}
+
 int glow_main(int argc, char *argv[]){
 	if(argc || argv){}
 	puts("Lantern Game Engine starting");
@@ -47,18 +51,37 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
 	
     printf("Got window %p and archive server %p\n", window, archive_server);
     fflush(stdout);
-    LX_Ortho(400, 320);
+    LX_Ortho(Lantern::ScreenWidth, Lantern::ScreenHeight);
     LX_EnableBlending();
     LX_EnableTexture();
 
     Lantern::TextureServer texture_server(*archive_server);
 
-    Lantern::Image glider = texture_server.load("windowstyle.tga");
+    Lantern::Image text_background_image = texture_server.load("windowstyle1.tga"),
+        outline_image = texture_server.load("windowstyle.tga");
 
     Lantern_FontContext *const ctx = Lantern_CreateFontContext();
-    Lantern_Primitive *const im = (Lantern_Primitive*)malloc(Lantern_PrimitiveSize());
-    Lantern_InitPrimitive(im);
-    Lantern_CreateRectangle(im, glider.w, glider.h, glider.texture);
+    Lantern_Primitive *const background = (Lantern_Primitive*)alloca(Lantern_PrimitiveSize()),
+        *const outline0 = (Lantern_Primitive*)alloca(Lantern_PrimitiveSize()),
+        *const outline1 = (Lantern_Primitive*)alloca(Lantern_PrimitiveSize()),
+        *const outline2 = (Lantern_Primitive*)alloca(Lantern_PrimitiveSize());
+    Lantern_InitPrimitive(background);
+    Lantern_InitPrimitive(outline0);
+    Lantern_InitPrimitive(outline1);
+    Lantern_InitPrimitive(outline2);
+    Lantern_CreateRectangle(background,
+        text_background_image.w, text_background_image.h, text_background_image.texture);
+    
+    const float h_repeat = 96.0f / static_cast<float>(text_background_image.h);
+
+    Lantern_CreateUVRectangle(0.0f, 0.0f, 0.25f, h_repeat,
+        outline0, 16, 96, text_background_image.texture);
+
+    Lantern_CreateUVRectangle(0.25f, 0.0f, 0.75f, h_repeat,
+        outline1, Lantern::ScreenWidth - 64, 96, text_background_image.texture);
+
+    Lantern_CreateUVRectangle(0.75f, 0.0f, 1.0f, h_repeat,
+        outline2, 16, 96, text_background_image.texture);
 
     Lantern_AddTextToFontContext(ctx, "This is some text.", 16, 16);
     
@@ -70,7 +93,11 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
         
         // Draw Scene
         Lantern_DrawFontContext(ctx);
-        Lantern_DrawPrimitive(im, 64, 64);
+        Lantern_DrawPrimitive(background, 64, 64);
+        Lantern_DrawPrimitive(outline0, 16, Lantern::ScreenHeight - 112);
+        Lantern_DrawPrimitive(outline1, 32, Lantern::ScreenHeight - 112);
+        Lantern_DrawPrimitive(outline2, Lantern::ScreenWidth - 32,
+            Lantern::ScreenHeight - 112);
         
         Glow_FlipScreen(window);
         // Get Events
@@ -81,6 +108,11 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
         // Handle Event
         
     } while(event.type != eGlowQuit);
+    
+    Lantern_DestroyPrimitive(background);
+    Lantern_DestroyPrimitive(outline0);
+    Lantern_DestroyPrimitive(outline1);
+    Lantern_DestroyPrimitive(outline2);
     
     Lantern_DestroyFontContext(ctx);
     

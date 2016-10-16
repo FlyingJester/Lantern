@@ -4,6 +4,11 @@ align 16
 
 global Lantern_Start
 global Lantern_End
+global ?ScreenWidth@Lantern@@3IB
+global ?ScreenHeight@Lantern@@3IB
+
+global Lantern_ScreenWidth
+global Lantern_ScreenHeight
 
 extern Lantern_InitGLExt
 extern Lantern_InitPrimitivesSubsystem
@@ -18,13 +23,30 @@ extern Glow_ShowWindow
 extern lantern_low_create_global_archive
 extern lantern_low_destroy_global_archive
 
+%define SCREENWIDTH 640
+%define SCREENHEIGHT 480
+
 Lantern_Start:
 	
-	xor rax, rax
 	sub rsp, 8
-	mov rcx, 640
-	mov rdx, 480
-	mov r8, QWORD glow_title
+	mov rcx, SCREENWIDTH
+	mov rdx, SCREENHEIGHT
+    
+    mov rax, QWORD ?ScreenWidth@Lantern@@3IB
+
+    shr rcx, 1
+	mov [rax], rcx
+    shl rcx, 1
+
+    mov rax, QWORD ?ScreenHeight@Lantern@@3IB
+
+    shr  rdx, 1
+	mov [rax], rdx
+    shl  rdx, 1
+
+    xor rax, rax
+	
+    mov r8, QWORD glow_title
 	mov r9, 2
 	
 	call Glow_CreateWindow
@@ -53,6 +75,12 @@ Lantern_End:
 	add rsp, 8
 	mov rax, 0
 	ret
+
+section .bss
+    Lantern_ScreenWidth:
+    ?ScreenWidth@Lantern@@3IB: resd 1
+    Lantern_ScreenHeight:
+    ?ScreenHeight@Lantern@@3IB: resd 1
 
 section .data
 	glow_title: db "Lantern Game Engine",0

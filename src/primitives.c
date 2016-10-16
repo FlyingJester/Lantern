@@ -11,7 +11,7 @@ const float rectangle_uv[16] = {
 	0.0f, 1.0f
 };
 
-LX_Buffer global_uv_buffer;
+LX_Buffer global_uv_buffer;;
 
 unsigned Lantern_PrimitiveSize(){
 	return sizeof(struct Lantern_Primitive);
@@ -41,6 +41,9 @@ void Lantern_InitPrimitive(struct Lantern_Primitive *primitive){
 void Lantern_DestroyPrimitive(struct Lantern_Primitive *primitive){
 	assert(primitive);
 	LX_DestroyBuffer(primitive->vbo);
+    
+    if(primitive->tex_coord.value != global_uv_buffer.value)
+        LX_DestroyBuffer(primitive->tex_coord);
 }
 
 void Lantern_CreateRectangle(struct Lantern_Primitive *primitive, unsigned w, unsigned h, LX_Texture tex){
@@ -48,9 +51,33 @@ void Lantern_CreateRectangle(struct Lantern_Primitive *primitive, unsigned w, un
     RECTANGLE_COORDS(data, 0, 0, w, h);
 	
 	LX_UploadBuffer(primitive->vbo, data, sizeof(data));
+    primitive->tex_coord = global_uv_buffer;
 	primitive->length = 4;
     primitive->type = eLX_Fan;
 	primitive->texture.value = tex.value;
+}
+
+void Lantern_CreateUVRectangle(float u0, float v0, float u1, float v1,
+    struct Lantern_Primitive *primitive, unsigned w, unsigned h, LX_Texture tex){
+
+    RECTANGLE_COORDS(data, 0, 0, w, h);
+	
+    float uv[16];
+    
+	LX_UploadBuffer(primitive->vbo, data, sizeof(data));
+    
+	primitive->tex_coord = LX_CreateBuffer();
+    uv[0] = uv[6] = u0;
+    uv[1] = uv[3] = v0;
+    uv[2] = uv[4] = u1;
+    uv[5] = uv[7] = v1;
+    
+	LX_UploadBuffer(primitive->tex_coord, uv, sizeof(uv));
+
+	primitive->length = 4;
+    primitive->type = eLX_Fan;
+	primitive->texture.value = tex.value;
+    
 }
 
 void Lantern_DrawPrimitiveLow(LX_Buffer vertex, LX_Buffer tex_coord, unsigned length, enum LX_DrawType type){
@@ -65,7 +92,7 @@ void Lantern_DrawPrimitive(const struct Lantern_Primitive *primitive, unsigned x
     LX_PushMatrix();
     LX_Translate(x, y);
 
-    Lantern_DrawPrimitiveLow(primitive->vbo, global_uv_buffer, primitive->length, primitive->type);
+    Lantern_DrawPrimitiveLow(primitive->vbo, primitive->tex_coord, primitive->length, primitive->type);
 
     LX_PopMatrix();
 
