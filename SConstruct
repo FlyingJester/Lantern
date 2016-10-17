@@ -38,7 +38,7 @@ mingw = EnableableOption("mingw", sys.platform == "msys" or sys.platform == "cyg
 
 if mingw:
 	environment.Append(CPPDEFINES="_WIN32=1")
-else:
+elif os.name == "nt":
     environment.Append(CCFLAGS="/EHsc")
 
 if is32bit:
