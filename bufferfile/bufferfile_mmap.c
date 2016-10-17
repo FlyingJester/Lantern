@@ -26,9 +26,11 @@ void *BufferFile(const char *file, int *size){
         struct stat lstat;
 
         if(fd<=0){
-            write(STDERR_FILENO, cannot_write_string, cannot_write_string_len);
-            write(STDERR_FILENO, file, b_strlen(file));
-            write(STDERR_FILENO, "\n", 1);
+            /* Silence unused-result warnings. */
+            (void)write(STDERR_FILENO, cannot_write_string, cannot_write_string_len);
+            (void)write(STDERR_FILENO, file, b_strlen(file));
+            (void)write(STDERR_FILENO, "\n", 1);
+            
             return NULL;
         }
 
