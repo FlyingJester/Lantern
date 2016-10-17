@@ -8,6 +8,10 @@
 #include <sys/mman.h>
 #include <assert.h>
 
+#if (defined __GNUC__) && __GNUC__ > 3
+#pragma GCC diagnostic ignored "-Wunused-result"
+#endif
+
 static const char cannot_write_string[] = "[BufferFile] Could not open file ";
 static const unsigned cannot_write_string_len = (sizeof cannot_write_string) - 1;
 
@@ -26,10 +30,9 @@ void *BufferFile(const char *file, int *size){
         struct stat lstat;
 
         if(fd<=0){
-            /* Silence unused-result warnings. */
-            (void)write(STDERR_FILENO, cannot_write_string, cannot_write_string_len);
-            (void)write(STDERR_FILENO, file, b_strlen(file));
-            (void)write(STDERR_FILENO, "\n", 1);
+            write(STDERR_FILENO, cannot_write_string, cannot_write_string_len);
+            write(STDERR_FILENO, file, b_strlen(file));
+            write(STDERR_FILENO, "\n", 1);
             
             return NULL;
         }
