@@ -1,4 +1,4 @@
-#include "../bufferfile.h"
+#include "bufferfile.h"
 #include <stdlib.h>
 
 #include <unistd.h>
