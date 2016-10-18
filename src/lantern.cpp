@@ -1,4 +1,5 @@
 #include "primitives.h"
+#include "primitives_obj.hpp"
 #include "lantern_gl_ext.h"
 #include "lantern_attributes.h"
 
@@ -58,61 +59,72 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
     Lantern::TextureServer texture_server(*archive_server);
 
     Lantern::Image text_background_image = texture_server.load("windowstyle1.tga"),
-        outline_image = texture_server.load("windowstyle.tga");
+        outline_image = texture_server.load("windowstyle.png");
 
     Lantern_FontContext *const ctx = Lantern_CreateFontContext();
-    Lantern_Primitive *const background = (Lantern_Primitive*)alloca(Lantern_PrimitiveSize()),
-        *const outline0 = (Lantern_Primitive*)alloca(Lantern_PrimitiveSize()),
-        *const outline1 = (Lantern_Primitive*)alloca(Lantern_PrimitiveSize()),
-        *const outline2 = (Lantern_Primitive*)alloca(Lantern_PrimitiveSize());
-    Lantern_InitPrimitive(background);
-    Lantern_InitPrimitive(outline0);
-    Lantern_InitPrimitive(outline1);
-    Lantern_InitPrimitive(outline2);
-    Lantern_CreateRectangle(background,
-        text_background_image.w, text_background_image.h, text_background_image.texture);
     
-    const float h_repeat = 96.0f / static_cast<float>(text_background_image.h);
+    LANTERN_CREATEPRIMTIVE(background0);
+    LANTERN_CREATEPRIMTIVE(background1);
+    LANTERN_CREATEPRIMTIVE(background2);
+    
+    LANTERN_CREATEPRIMTIVE(outline_ul);
+    LANTERN_CREATEPRIMTIVE(outline_u);
+    LANTERN_CREATEPRIMTIVE(outline_ur);
+    LANTERN_CREATEPRIMTIVE(outline_r);
+    LANTERN_CREATEPRIMTIVE(outline_dr);
+    LANTERN_CREATEPRIMTIVE(outline_d);
+    LANTERN_CREATEPRIMTIVE(outline_dl);
+    LANTERN_CREATEPRIMTIVE(outline_l);
 
-    Lantern_CreateUVRectangle(0.0f, 0.0f, 0.25f, h_repeat,
-        outline0, 16, 96, text_background_image.texture);
-
-    Lantern_CreateUVRectangle(0.25f, 0.0f, 0.75f, h_repeat,
-        outline1, Lantern::ScreenWidth - 64, 96, text_background_image.texture);
-
-    Lantern_CreateUVRectangle(0.75f, 0.0f, 1.0f, h_repeat,
-        outline2, 16, 96, text_background_image.texture);
-
+    const float text_h = 64.0f;
+    const float h_repeat = 0.75 *  text_h / static_cast<float>(text_background_image.h);
+    background0.UVRectangle(0.0f,  0.0f, 0.25f, h_repeat, 16, text_h, text_background_image);
+    background1.UVRectangle(0.25f, 0.0f, 0.75f, h_repeat, Lantern::ScreenWidth - 64, text_h, text_background_image);
+    background2.UVRectangle(0.75f, 0.0f, 1.0f,  h_repeat, 16, text_h, text_background_image);
+    
+    outline_ul.UVRectangle(0.0f, 0.0f, 0.5f, 0.5f, 16, 16, outline_image);
+    outline_ur.UVRectangle(0.5f, 0.0f, 1.0f, 0.5f, 16, 16, outline_image);
+    outline_dr.UVRectangle(0.5f, 0.5f, 1.0f, 1.0f, 16, 16, outline_image);
+    outline_dl.UVRectangle(0.0f, 0.5f, 0.5f, 1.0f, 16, 16, outline_image);
+    outline_u.UVRectangle(0.48f, 0.0f, 0.49f, 0.5f, Lantern::ScreenWidth - 32, 16, outline_image);
+    outline_r.UVRectangle(0.0f, 0.48f, 0.5f, 0.49f, 16, text_h, outline_image);
+    outline_d.UVRectangle(0.51f, 0.5f, 0.52f, 1.0f, Lantern::ScreenWidth - 32, 16, outline_image);
+    outline_l.UVRectangle(0.5f, 0.51f, 1.0f, 0.52f, 16, text_h, outline_image);
+    
     Lantern_AddTextToFontContext(ctx, "This is some text.", 16, 16);
     
     Glow_Event event;
     event.type = eGlowUnknown;
     
+    const unsigned text_area_y = Lantern::ScreenHeight - (text_h + 16);
     do {
         lantern_frame_delay();
         
         // Draw Scene
         Lantern_DrawFontContext(ctx);
-        Lantern_DrawPrimitive(background, 64, 64);
-        Lantern_DrawPrimitive(outline0, 16, Lantern::ScreenHeight - 112);
-        Lantern_DrawPrimitive(outline1, 32, Lantern::ScreenHeight - 112);
-        Lantern_DrawPrimitive(outline2, Lantern::ScreenWidth - 32,
-            Lantern::ScreenHeight - 112);
+        background0.draw(16, text_area_y);
+        background1.draw(32, text_area_y);
+        background2.draw(Lantern::ScreenWidth - 32, text_area_y);
+        outline_ul.draw(0, text_area_y - 16);
+        outline_ur.draw(Lantern::ScreenWidth - 16, text_area_y - 16);
+        outline_dr.draw(Lantern::ScreenWidth - 16, Lantern::ScreenHeight - 16);
+        outline_dl.draw(0, Lantern::ScreenHeight - 16);
+        
+        outline_u.draw(16, text_area_y - 16);
+        outline_l.draw(0, text_area_y);
+        outline_d.draw(16, Lantern::ScreenHeight - 16);
+        outline_r.draw( Lantern::ScreenWidth - 16, text_area_y);
         
         Glow_FlipScreen(window);
         // Get Events
         while(Glow_GetEvent(window, &event)){
             
             
+            
         }
         // Handle Event
         
     } while(event.type != eGlowQuit);
-    
-    Lantern_DestroyPrimitive(background);
-    Lantern_DestroyPrimitive(outline0);
-    Lantern_DestroyPrimitive(outline1);
-    Lantern_DestroyPrimitive(outline2);
     
     Lantern_DestroyFontContext(ctx);
     
