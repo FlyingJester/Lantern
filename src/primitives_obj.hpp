@@ -18,6 +18,16 @@ public:
         unsigned w, unsigned h, const Image &img);
 };
 
+class WindowStyle {
+    Lantern_Primitive *const p;
+    unsigned m_w, m_h;
+public:
+    WindowStyle(TextureServer &texture_server, unsigned w, unsigned h);
+    ~WindowStyle();
+    
+    void draw(unsigned x, unsigned y) const;
+};
+
 #define LANTERN_DECLPRIMTIVE(NAME)\
     Lantern::Primitive NAME(alloca(Lantern_PrimitiveSize()));
 #define LANTERN_CREATEPRIMTIVE(NAME)\

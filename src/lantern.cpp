@@ -63,57 +63,20 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
 
     Lantern_FontContext *const ctx = Lantern_CreateFontContext();
     
-    LANTERN_CREATEPRIMTIVE(background0);
-    LANTERN_CREATEPRIMTIVE(background1);
-    LANTERN_CREATEPRIMTIVE(background2);
-    
-    LANTERN_CREATEPRIMTIVE(outline_ul);
-    LANTERN_CREATEPRIMTIVE(outline_u);
-    LANTERN_CREATEPRIMTIVE(outline_ur);
-    LANTERN_CREATEPRIMTIVE(outline_r);
-    LANTERN_CREATEPRIMTIVE(outline_dr);
-    LANTERN_CREATEPRIMTIVE(outline_d);
-    LANTERN_CREATEPRIMTIVE(outline_dl);
-    LANTERN_CREATEPRIMTIVE(outline_l);
-
-    const float text_h = 64.0f;
-    const float h_repeat = 0.75 *  text_h / static_cast<float>(text_background_image.h);
-    background0.UVRectangle(0.0f,  0.0f, 0.25f, h_repeat, 16, text_h, text_background_image);
-    background1.UVRectangle(0.25f, 0.0f, 0.75f, h_repeat, Lantern::ScreenWidth - 64, text_h, text_background_image);
-    background2.UVRectangle(0.75f, 0.0f, 1.0f,  h_repeat, 16, text_h, text_background_image);
-    
-    outline_ul.UVRectangle(0.0f, 0.0f, 0.5f, 0.5f, 16, 16, outline_image);
-    outline_ur.UVRectangle(0.5f, 0.0f, 1.0f, 0.5f, 16, 16, outline_image);
-    outline_dr.UVRectangle(0.5f, 0.5f, 1.0f, 1.0f, 16, 16, outline_image);
-    outline_dl.UVRectangle(0.0f, 0.5f, 0.5f, 1.0f, 16, 16, outline_image);
-    outline_u.UVRectangle(0.48f, 0.0f, 0.49f, 0.5f, Lantern::ScreenWidth - 32, 16, outline_image);
-    outline_r.UVRectangle(0.0f, 0.48f, 0.5f, 0.49f, 16, text_h, outline_image);
-    outline_d.UVRectangle(0.51f, 0.5f, 0.52f, 1.0f, Lantern::ScreenWidth - 32, 16, outline_image);
-    outline_l.UVRectangle(0.5f, 0.51f, 1.0f, 0.52f, 16, text_h, outline_image);
+    Lantern::WindowStyle ws(texture_server, Lantern::ScreenWidth, 96);
     
     Lantern_AddTextToFontContext(ctx, "This is some text.", 16, 16);
     
     Glow_Event event;
     event.type = eGlowUnknown;
     
-    const unsigned text_area_y = Lantern::ScreenHeight - (text_h + 16);
     do {
         lantern_frame_delay();
         
         // Draw Scene
         Lantern_DrawFontContext(ctx);
-        background0.draw(16, text_area_y);
-        background1.draw(32, text_area_y);
-        background2.draw(Lantern::ScreenWidth - 32, text_area_y);
-        outline_ul.draw(0, text_area_y - 16);
-        outline_ur.draw(Lantern::ScreenWidth - 16, text_area_y - 16);
-        outline_dr.draw(Lantern::ScreenWidth - 16, Lantern::ScreenHeight - 16);
-        outline_dl.draw(0, Lantern::ScreenHeight - 16);
         
-        outline_u.draw(16, text_area_y - 16);
-        outline_l.draw(0, text_area_y);
-        outline_d.draw(16, Lantern::ScreenHeight - 16);
-        outline_r.draw( Lantern::ScreenWidth - 16, text_area_y);
+        ws.draw(0, Lantern::ScreenHeight - 96);
         
         Glow_FlipScreen(window);
         // Get Events
