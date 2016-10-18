@@ -22,6 +22,10 @@ class WindowStyle {
     Lantern_Primitive *const p;
     unsigned m_w, m_h;
 public:
+
+    inline unsigned w() const { return m_w; }
+    inline unsigned h() const { return m_h; }
+    
     WindowStyle(TextureServer &texture_server, unsigned w, unsigned h);
     ~WindowStyle();
     

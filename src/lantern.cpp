@@ -63,7 +63,8 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
 
     Lantern_FontContext *const ctx = Lantern_CreateFontContext();
     
-    Lantern::WindowStyle ws(texture_server, Lantern::ScreenWidth, 96);
+    Lantern::WindowStyle ws(texture_server, Lantern::ScreenWidth, 96),
+        items(texture_server, 96, Lantern::ScreenHeight - ws.h());
     
     Lantern_AddTextToFontContext(ctx, "This is some text.", 16, 16);
     
@@ -76,7 +77,8 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
         // Draw Scene
         Lantern_DrawFontContext(ctx);
         
-        ws.draw(0, Lantern::ScreenHeight - 96);
+        ws.draw(0, Lantern::ScreenHeight - ws.h());
+        items.draw(Lantern::ScreenWidth - items.w(), 0);
         
         Glow_FlipScreen(window);
         // Get Events
