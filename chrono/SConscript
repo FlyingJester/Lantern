@@ -20,7 +20,7 @@ else:
     elif conf.CheckCHeader("unistd.h") and conf.CheckFunc("usleep"):
         if "linux" in sys.platform:
             defs = ["_DEFAULT_SOURCE", "_BSD_SOURCE"]
-        all_src.append("usleep.c")
+        all_src.append("usleep.s")
     elif conf.CheckCHeader("time.h") and conf.CheckFunc("nanosleep"):
         all_src.append("nanosleep.c")
 

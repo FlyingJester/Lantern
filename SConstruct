@@ -42,24 +42,24 @@ elif os.name == "nt":
     environment.Append(CCFLAGS="/EHsc")
 
 if is32bit:
-	if mingw or os.name == "posix":
-		environment.Append(ASFLAGS = " -f elf ")
-	elif os.name == "nt":
-		environment.Append(ASFLAGS = " -f win32 -d win32 ")
-	else:
-		print ("Add the asm init routines for your platform!")
-		quit()
+    if mingw or os.name == "posix":
+        environment.Append(ASFLAGS = " -f elf ")
+    elif os.name == "nt":
+        environment.Append(ASFLAGS = " -f win32 -d win32 ")
+    else:
+        print ("Add the asm init routines for your platform!")
+        quit()
 else:
-	if mingw:
-		environment.Append(CPPDEFINES="_WIN64=1")
-	
-	if mingw or os.name == "posix":
-		environment.Append(ASFLAGS = " -f elf64 -m amd64 ")
-	elif os.name == "nt":
-		environment.Append(ASFLAGS = " -f win64 -d win64 ")
-	else:
-		print ("Add the asm init routines for your platform!")
-		quit()
+    if mingw:
+        environment.Append(CPPDEFINES="_WIN64=1")
+    
+    if mingw or os.name == "posix":
+    environment.Append(ASFLAGS = " -f elf64 -m amd64 ")
+    elif os.name == "nt":
+        environment.Append(ASFLAGS = " -f win64 -d win64 ")
+    else:
+        print ("Add the asm init routines for your platform!")
+        quit()
 
 if mingw:
 	environment.Append(LINKFLAGS = "-mwindows")
@@ -78,7 +78,7 @@ base = environment.Clone()
 bufferfile = SConscript(dirs = ["bufferfile"], exports = ["environment"])
 environment = base.Clone()
 
-libnames = ["dlcl", "turbojson", "glow", "aimg", "spherefonts", "chrono", "fileops"]
+libnames = ["dlcl", "TurboJSON", "glow", "aimg", "spherefonts", "chrono", "fileops"]
 libs = [bufferfile]
 
 for name in libnames:
