@@ -7,6 +7,7 @@
 
 #include "servers/archives.hpp"
 #include "servers/textures.hpp"
+#include "servers/items.hpp"
 
 #include "spherefonts/font.h"
 
@@ -57,7 +58,20 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
     LX_EnableTexture();
 
     Lantern::TextureServer texture_server(*archive_server);
-
+    Lantern::ItemServer item_server(*archive_server);
+    
+    {
+        const Lantern::Item *const item = item_server.load("iron_key.json");
+        if(item){
+            puts(item->toString().c_str());
+        }
+        else{
+            puts("Could not load iron_key.json\n");
+        }
+        fflush(stdout);
+        
+        delete item;
+    }
     Lantern::Image text_background_image = texture_server.load("windowstyle1.tga"),
         outline_image = texture_server.load("windowstyle.png");
 

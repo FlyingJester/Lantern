@@ -4,7 +4,6 @@ import sys
 
 src = [
     "game.cpp",
-    "item.cpp",
     "lantern.cpp",
     "primitives.c",
     "primitives_obj.cpp",

@@ -54,7 +54,7 @@ else:
         environment.Append(CPPDEFINES="_WIN64=1")
     
     if mingw or os.name == "posix":
-    environment.Append(ASFLAGS = " -f elf64 -m amd64 ")
+        environment.Append(ASFLAGS = " -f elf64 -m amd64 ")
     elif os.name == "nt":
         environment.Append(ASFLAGS = " -f win64 -d win64 ")
     else:

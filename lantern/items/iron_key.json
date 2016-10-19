@@ -1,0 +1,12 @@
+{
+  "uname":"ironKey",
+  "name":"Iron Key",
+  "description":"A key made of iron. It seems too big to unlock something like a drawer or cabinet.",
+  "image":"iron_key.png",
+  "canCarry":true,
+  "onUse":{
+    "lockedOakDoor":"[PostMessage \"The key turns slowly, unlocking the door.\"] [ReplaceOtherObject \"unlockedOakDoor\"]",
+    "unlockedOakDoor":"[PostMessage \"The door is already unlocked.\"]",
+    "vanity":"[PostMessage \"The key almost fits, but it clearly isn't for this.\"]"
+  }
+}

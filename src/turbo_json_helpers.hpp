@@ -42,5 +42,46 @@ public:
 	virtual void accept(const struct Turbo_Value &that);
 };
 
-typedef std::map<std::string, TurboJSON_Adapter *> turbo_json_map_t;
-bool TurbJSON_SearchObject(const struct Turbo_Value &value, const turbo_json_map_t &values);
+class TurboJSON_ObjectAdapter : public TurboJSON_Adapter {
+	const struct Turbo_Value *&value;
+public:
+	TurboJSON_ObjectAdapter(const struct Turbo_Value *&v) : value(v) {}
+	
+	virtual Turbo_Type getType() const { return TJ_Object; }
+	virtual void accept(const struct Turbo_Value &that);
+};
+
+bool StringCompare(const std::string &i, const char *, unsigned n);
+bool StringCompare(const char *, const char *, unsigned n);
+
+template<typename IterI>
+inline bool TurbJSON_SearchObject(const struct Turbo_Value &value,
+    IterI adapterBegin, IterI adapterEnd){
+	if(value.type != TJ_Object)
+		return false;
+	
+	for(unsigned n = 0; n < value.length; n++){
+        
+        IterI iter = adapterEnd;
+        for(IterI i = adapterBegin; i != adapterEnd; i++){
+            if(StringCompare(i->first, value.value.object[n].name, value.value.object[n].name_length)){
+                iter = i;
+                break; 
+            }
+        }
+        
+		if(iter == adapterEnd)
+			continue;
+		
+		if(iter->second->getType() != value.value.object[n].value.type)
+			continue;
+		
+		iter->second->accept(value.value.object[n].value);
+        
+        if(iter == adapterBegin)
+            adapterBegin++;
+        
+	}
+	
+	return true;
+}
