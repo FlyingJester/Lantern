@@ -9,13 +9,12 @@ void TurboJSON_BooleanAdapter::accept(const struct Turbo_Value &that){
 	value = that.value.boolean;
 }
 
-void TurboJSON_ObjectAdapter::accept(const struct Turbo_Value &that){
+void TurboJSON_ValueAdapter::accept(const struct Turbo_Value &that){
     value = &that;
 }
 
-void TurboJSON_ArrayAdapter::accept(const struct Turbo_Value &that){
-    value = &that;
-}
+Turbo_Type TurboJSON_ObjectAdapter::getType() const { return TJ_Object; }
+Turbo_Type TurboJSON_ArrayAdapter::getType() const { return TJ_Array; }
 
 bool StringCompare(const std::string &i, const char *str, unsigned n){
     return i.length() == n && i == str;

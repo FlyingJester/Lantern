@@ -44,22 +44,24 @@ public:
 	virtual void accept(const struct Turbo_Value &that);
 };
 
-class TurboJSON_ObjectAdapter : public TurboJSON_Adapter {
+class TurboJSON_ValueAdapter : public TurboJSON_Adapter {
 	const struct Turbo_Value *&value;
 public:
-	TurboJSON_ObjectAdapter(const struct Turbo_Value *&v) : value(v) {}
+	TurboJSON_ValueAdapter(const struct Turbo_Value *&v) : value(v) {}
 	
-	virtual Turbo_Type getType() const { return TJ_Object; }
 	virtual void accept(const struct Turbo_Value &that);
 };
 
-class TurboJSON_ArrayAdapter : public TurboJSON_Adapter {
-	const struct Turbo_Value *&value;
+class TurboJSON_ObjectAdapter : public TurboJSON_ValueAdapter {
 public:
-	TurboJSON_ArrayAdapter(const struct Turbo_Value *&v) : value(v) {}
-	
-	virtual Turbo_Type getType() const { return TJ_Array; }
-	virtual void accept(const struct Turbo_Value &that);
+	TurboJSON_ObjectAdapter(const struct Turbo_Value *&v) : TurboJSON_ValueAdapter(v) {}
+	virtual Turbo_Type getType() const;
+};
+
+class TurboJSON_ArrayAdapter : public TurboJSON_ValueAdapter {
+public:
+	TurboJSON_ArrayAdapter(const struct Turbo_Value *&v) : TurboJSON_ValueAdapter(v) {}
+	virtual Turbo_Type getType() const;
 };
 
 bool StringCompare(const std::string &i, const char *, unsigned n);
