@@ -10,6 +10,7 @@
 #include <cstring>
 #include <algorithm>
 
+// Sorry this is so ugly. I was in a hurry ;_;
 namespace Lantern {
 
 Item::Item(const i_str &name, const i_str &uname,

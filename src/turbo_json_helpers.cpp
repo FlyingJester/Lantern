@@ -13,6 +13,10 @@ void TurboJSON_ObjectAdapter::accept(const struct Turbo_Value &that){
     value = &that;
 }
 
+void TurboJSON_ArrayAdapter::accept(const struct Turbo_Value &that){
+    value = &that;
+}
+
 bool StringCompare(const std::string &i, const char *str, unsigned n){
     return i.length() == n && i == str;
 }

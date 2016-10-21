@@ -8,6 +8,7 @@
 #include "servers/archives.hpp"
 #include "servers/textures.hpp"
 #include "servers/items.hpp"
+#include "servers/rooms.hpp"
 
 #include "spherefonts/font.h"
 
@@ -58,6 +59,7 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
     LX_EnableTexture();
 
     Lantern::TextureServer texture_server(*archive_server);
+    Lantern::RoomServer room_server(*archive_server, texture_server);
     Lantern::ItemServer item_server(*archive_server);
     
     {

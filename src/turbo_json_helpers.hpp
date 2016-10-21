@@ -1,6 +1,8 @@
 #pragma once
 
 #include "TurboJSON/parse.h"
+#include "TurboJSON/object.h"
+#include "TurboJSON/value.h"
 
 #include <map>
 #include <string>
@@ -48,6 +50,15 @@ public:
 	TurboJSON_ObjectAdapter(const struct Turbo_Value *&v) : value(v) {}
 	
 	virtual Turbo_Type getType() const { return TJ_Object; }
+	virtual void accept(const struct Turbo_Value &that);
+};
+
+class TurboJSON_ArrayAdapter : public TurboJSON_Adapter {
+	const struct Turbo_Value *&value;
+public:
+	TurboJSON_ArrayAdapter(const struct Turbo_Value *&v) : value(v) {}
+	
+	virtual Turbo_Type getType() const { return TJ_Array; }
 	virtual void accept(const struct Turbo_Value &that);
 };
 
