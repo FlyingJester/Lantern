@@ -17,6 +17,8 @@
 
 #define LANTERN_RESTRICT __restrict__
 
+#define LANTERN_NOINLINE(X) X __attribute__((noinline))
+
 #elif defined _MSC_VER
 
 #define LANTERN_NOT_NULL(X) X
@@ -33,6 +35,8 @@
 
 #define LANTERN_RESTRICT __restrict
 
+#define LANTERN_NOINLINE(X) __declspec(noinline) X
+
 #else
 
 #define LANTERN_NOT_NULL(X) X
@@ -48,6 +52,8 @@
 #define LANTERN_UNLIKELY(X) (!!(X))
 
 #define LANTERN_RESTRICT
+
+#define LANTERN_NOINLINE(X) X
 
 #endif
 

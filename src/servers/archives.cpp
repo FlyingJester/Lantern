@@ -99,19 +99,19 @@ bool ArchiveServer::findFirstMatch(Lantern_ArchiveEntry &entry, Lantern_Archive 
 	return find_first_match(m_archives.begin(), m_archives.end(), FindFirstMatchCallback, entry, archive, cb, arg);
 }
 
-ArchiveServer *Lantern_CreateArchiveServer(){
-	return new ArchiveServer();
+void *Lantern_CreateArchiveServer(){
+	return (void*)(new ArchiveServer());
 }
 
-void Lantern_DestroyArchiveServer(ArchiveServer *server){
-	delete server;
+void Lantern_DestroyArchiveServer(void *server){
+	delete static_cast<ArchiveServer*>(server);
 }
 
-void Lantern_AppendToArchiveServer(ArchiveServer *server, const void *data, unsigned long size){
+void Lantern_AppendToArchiveServer(void *server, const void *data, unsigned long size){
 	Lantern_Archive archive;
 	archive.data = data;
 	archive.size = size;
-	server->append(archive);
+	static_cast<ArchiveServer*>(server)->append(archive);
 }
 
 } // namespace Lantern

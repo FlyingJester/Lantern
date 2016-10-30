@@ -1,0 +1,21 @@
+import os
+import sys
+
+Import("environment")
+
+conf = environment.Configure()
+
+if "haiku" in sys.platform.lower():
+    src = "fileops_haiku.cpp"
+elif os.name != "nt" and conf.CheckCHeader("unistd.h") and conf.CheckCHeader("sys/stat.h"):
+    src = "fileops_posix.c"
+elif os.name == "nt" or sys.platform == "msys" or sys.platform == "cygwin":
+    src = "fileops_win32.c"
+else:
+    print ("No suitable fileops backend!")
+
+environment = conf.Finish()
+
+fileops = environment.StaticLibrary("fileops", [src])
+
+Return("fileops")

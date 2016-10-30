@@ -2,6 +2,9 @@ Import("environment libs is32bit mingw")
 import os
 import sys
 
+for l in libs:
+	print(l)
+
 src = [
     "game.cpp",
     "lantern.cpp",
@@ -43,13 +46,15 @@ if os.name == "nt" or mingw:
 	if not mingw:
 		libs+=["GDI32.lib", "user32.lib"]
 else:
-	libs.append("GL")
-	
+	libs += ["GL", "X11", "Xext", "png"]
+
 lantern = environment.Program("lantern", src, LIBS = libs)
 
 cpio_env = environment.Clone()
-if mingw:
-	cpio_env.Append(LINKFLAGS = " -static ")
-cpio = cpio_env.Program("lanterncpio", ["cpio_main.cpp"])
+
+if mingw or os.name == "nt":
+    if mingw:
+    	cpio_env.Append(LINKFLAGS = " -static ")
+    cpio = cpio_env.Program("lanterncpio", ["cpio_main.cpp"])
 
 Return("lantern")

@@ -48,7 +48,7 @@ static bool find_files(const char *dir, std::vector<cpio_entry>& in_out){
 }
 
 #else
-	
+
 #endif
 
 static void write_octal(unsigned size, unsigned value, FILE *const file){

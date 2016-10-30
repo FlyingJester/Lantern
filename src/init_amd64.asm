@@ -2,25 +2,30 @@ section .text
 bits 64
 align 16
 
-%if WINDOWS
+%ifdef WINDOWS
 %define ARG1 rcx
 %define ARG2 rdx
 %define ARG3 r8
 %define ARG4 r9
+%define SCREEN_WIDTH ?ScreenWidth@Lantern@@3IB
+%define SCREEN_HEIGHT ?ScreenHeight@Lantern@@3IB
 %endif
 
-%if UNIX
+%ifdef UNIX
 %define ARG1 rdi
 %define ARG2 rsi
 %define ARG3 rdx
 %define ARG4 rcx
+%define SCREEN_WIDTH _ZN7Lantern11ScreenWidthE
+%define SCREEN_HEIGHT _ZN7Lantern12ScreenHeightE
 %endif
 
 
 global Lantern_Start
 global Lantern_End
-global ?ScreenWidth@Lantern@@3IB
-global ?ScreenHeight@Lantern@@3IB
+
+global SCREEN_WIDTH
+global SCREEN_HEIGHT
 
 global Lantern_ScreenWidth
 global Lantern_ScreenHeight
@@ -47,13 +52,13 @@ Lantern_Start:
     mov ARG1, SCREENWIDTH
     mov ARG2, SCREENHEIGHT
     
-    mov rax, QWORD ?ScreenWidth@Lantern@@3IB
+    mov rax, QWORD SCREEN_WIDTH
 
     shr ARG1, 1
     mov [rax], ARG1
     shl ARG1, 1
 
-    mov rax, QWORD ?ScreenHeight@Lantern@@3IB
+    mov rax, QWORD SCREEN_HEIGHT
 
     shr  ARG2, 1
     mov [rax], ARG2
@@ -93,9 +98,10 @@ Lantern_End:
 
 section .bss
     Lantern_ScreenWidth:
-    ?ScreenWidth@Lantern@@3IB: resd 1
+    SCREEN_WIDTH: resd 1
+
     Lantern_ScreenHeight:
-    ?ScreenHeight@Lantern@@3IB: resd 1
+    SCREEN_HEIGHT: resd 1
 
 section .data
 	glow_title: db "Lantern Game Engine",0

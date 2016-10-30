@@ -61,6 +61,10 @@ static const GLint glow_attribs[] = {
     None
 };
 
+void Glow_MakeCurrent(struct Glow_Window *win){
+    glXMakeCurrent(win->dpy, win->wnd, win->ctx);
+}
+
 struct Glow_Window *Glow_CreateWindow(unsigned aW, unsigned aH,
     const char *title, unsigned gl_maj, unsigned gl_min){
 
@@ -168,6 +172,8 @@ struct Glow_Window *Glow_CreateWindow(unsigned aW, unsigned aH,
 
             XSync(out->dpy, False);
 
+            Glow_MakeCurrent(out);
+
             return out;
         }
     }
@@ -177,4 +183,47 @@ xclose_err:
     XCloseDisplay(out->dpy);
     return NULL;
 }
+
+void Glow_FlipScreen(struct Glow_Window *that){
+    glXSwapBuffers(that->dpy, that->wnd);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Glow_DestroyWindow(struct Glow_Window *that){
+    XSync(that->dpy, False);
+
+    glXDestroyContext(that->dpy, that->ctx);
+    XFree(that->vis);
+    XFreeColormap(that->dpy, that->cmap);
+    XDestroyWindow(that->dpy, that->wnd);
+    XFree(that->scr);
+    XSync(that->dpy, False);
+
+    XCloseDisplay(that->dpy);
+}
+
+void Glow_ShowWindow(struct Glow_Window *that){
+    XClearWindow(that->dpy, that->wnd);
+    XMapRaised(that->dpy, that->wnd);
+}
+
+unsigned Glow_GetEvent(struct Glow_Window *that, struct Glow_Event *out){
+    if(XPending(that->dpy) > 0){
+        XEvent event;
+        XNextEvent(that->dpy, &event);
+        switch(event.type){
+            
+            case UnmapNotify:
+            case DestroyNotify:
+                out->type = eGlowQuit;
+                return 1;
+            default:
+                return 0;
+        }
+    }
+    return 0;
+}
+
+int main(int argc, char **argv){ return glow_main(argc, argv); }
+
 
