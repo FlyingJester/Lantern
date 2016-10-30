@@ -36,6 +36,13 @@ environment.Replace(AS = "yasm")
 is32bit = EnableableOption("m32", False)
 mingw = EnableableOption("mingw", sys.platform == "msys" or sys.platform == "cygwin")
 
+if mingw or os.name == "nt":
+    environment.Append(ASFLAGS = " -D WINDOWS ")
+else:
+    environment.Append(ASFLAGS = " -D UNIX ")
+
+use_glext = EnableableOption("glext", mingw or os.name == "nt")
+
 if mingw:
 	environment.Append(CPPDEFINES="_WIN32=1")
 elif os.name == "nt":
@@ -97,5 +104,7 @@ for name in libnames:
         libs.append(result)
     environment = base.Clone()
 
+if use_glext:
+    environment.Append(CPPDEFINES="LANTERN_GL_EXT")
 lantern = SConscript(dirs = ["src"], exports = ["environment", "libs", "is32bit", "mingw"])
 Install(os.path.join(os.getcwd(), "lantern"), lantern)

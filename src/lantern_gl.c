@@ -2,7 +2,14 @@
 #include "lantern_gl_ext.h"
 #include "lantern_attributes.h"
 
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
+
 #include <GL/gl.h>
+#include <GL/glext.h>
+
+#endif
 
 #include <assert.h>
 

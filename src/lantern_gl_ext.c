@@ -3,9 +3,17 @@
 #include <assert.h>
 
 #if defined(_WIN32) || defined(LANTERN_GL_EXT) || defined __CYGWIN__
-#include <Windows.h>
+    #if defined(_WIN32) || defined __CYGWIN__
+        #include <Windows.h>
+    #elif defined __APPLE__
+        #include <OpenGL/gl.h>
+        #include <OpenGL/glx.h>
+    #else
+        #include <GL/gl.h>
+        #include <GL/glx.h>
+    #endif
 #else
-#error Add glX or egl or whatever here!
+
 #endif
 
 lxBufferDataOP lxBufferData = NULL;
@@ -18,7 +26,7 @@ void Lantern_InitGLExt(){
 #if defined _WIN32 || defined __CYGWIN__
 #define LX_LOAD(NAME, TYPE) lx ## NAME = (TYPE)wglGetProcAddress( "gl" #NAME); assert(lx ## NAME != NULL)
 #else
-#error Add glX or egl or whatever here!
+#define LX_LOAD(NAME, TYPE) lx ## NAME = (TYPE)glXGetProcAddressARB( (unsigned char*) "gl" #NAME); assert(lx ## NAME != NULL)
 #endif
 
 LX_LOAD(GenBuffers, lxBufferOP);

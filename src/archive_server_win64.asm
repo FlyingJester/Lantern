@@ -151,12 +151,12 @@ archive_end:
 ;    ret
 
 lantern_low_create_global_archive:  
-	push r15
-	mov r15, r8 ; Put the path in r15
-	call Lantern_CreateArchiveServer
-	mov QWORD [QWORD archive_server], rax
-	cmp rax, 0
-	je create_end
+    push r15
+    mov r15, r8 ; Put the path in r15
+    call Lantern_CreateArchiveServer
+    mov QWORD [QWORD archive_server], rax
+    cmp rax, 0
+    je create_end
 	
     ; TODO: handle prefixes
     cmp r15, 0

@@ -64,8 +64,9 @@ Room *RoomServer::load(const std::string &name){
     
     struct Lantern_ArchiveEntry entry;
     struct Lantern_Archive archive;
-	struct Turbo_Value value;
-
+    struct Turbo_Value value;
+    (void)entry;
+    (void)archive;
     int i;
     const char *const src = (const char *)BufferFile((std::string("items/") + name).c_str(), &i),
         *const end = src + i;

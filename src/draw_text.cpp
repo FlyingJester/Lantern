@@ -22,17 +22,21 @@ struct Letter {
 };
 
 class TextLine {
-    std::vector<Letter> m_letters;
-    
+    Letter *m_letters;
+    unsigned m_num_letters;
+
     struct Appender{
         const struct Sphere_Font *const m_font;
-        std::vector<Letter> &m_letters;
+        const Letter *const m_letters;
+        unsigned m_num_letters, m_at;
         unsigned m_x;
         const unsigned m_y;
-        Appender(const struct Sphere_Font *font,
-            std::vector<Letter> &letters, unsigned x, unsigned y)
+        Appender(const struct Sphere_Font *font, Letter *letters,
+            unsigned num_letters, unsigned x, unsigned y)
           : m_font(font)
           , m_letters(letters)
+          , m_num_letters(num_letters)
+          , m_at(0)
           , m_x(x)
           , m_y(y){
             
@@ -40,8 +44,6 @@ class TextLine {
         
         void operator() (char c){
             
-            m_letters.resize(m_letters.size() + 1);
-
             const Sphere_Glyph *const glyph = Sphere_GetBoundedGlyph(m_font, (unsigned)c);
             
             RECTANGLE_COORDS(vertex, m_x, m_y, glyph->w, glyph->h);
@@ -54,8 +56,10 @@ class TextLine {
             
             m_x += glyph->w;
             
-            LX_UploadBuffer(m_letters.back().vertex, vertex, sizeof(vertex));
-            LX_UploadBuffer(m_letters.back().tex_coord, tex_coord, sizeof(tex_coord));
+            LX_UploadBuffer(m_letters[m_at].vertex, vertex, sizeof(vertex));
+            LX_UploadBuffer(m_letters[m_at].tex_coord, tex_coord, sizeof(tex_coord));
+
+            m_at++;
         }
     };
 public:
@@ -68,8 +72,8 @@ public:
 
 class Text {
     std::vector<TextLine> m_text;
-    const LX_Texture m_texture;
     const struct Sphere_Font *const m_font;
+    const LX_Texture m_texture;
 public:
     Text(const struct Sphere_Font *font)
       : m_font(font)
@@ -94,18 +98,19 @@ public:
 void TextLine::assign(const struct Sphere_Font *font, const char *text, unsigned x, unsigned y){
     const unsigned i = strlen(text);
     
-    m_letters.clear();
-    m_letters.reserve(i);
+    if(m_letters)
+        delete[] m_letters;
+    m_num_letters = i;
+    m_letters = new Letter[i];
     
-    Appender appender(font, m_letters, x, y);
+    Appender appender(font, m_letters, m_num_letters, x, y);
     
     std::for_each(text, text + i, appender);
 }
 
 void TextLine::draw() const {
-    for(std::vector<Letter>::const_iterator i = m_letters.begin();
-        i != m_letters.end(); i++){
-        Lantern_DrawPrimitiveLow(i->vertex, i->tex_coord, 4, eLX_Fan);
+    for(unsigned i = 0; i < m_num_letters; i++){
+        Lantern_DrawPrimitiveLow(m_letters[i].vertex, m_letters[i].tex_coord, 4, eLX_Fan);
     }
 }
 

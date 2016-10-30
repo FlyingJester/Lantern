@@ -52,7 +52,11 @@
 #endif
 
 #if __x86_64__ || ((defined (_WIN32)) && !defined(_WIN64))
-#define LANTERN_FASTCALL __fastcall
+    #ifdef __GNUC__
+        #define LANTERN_FASTCALL
+    #else
+        #define LANTERN_FASTCALL __fastcall
+    #endif
 #else
 #define LANTERN_FASTCALL
 #endif

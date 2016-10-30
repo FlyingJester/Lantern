@@ -29,11 +29,11 @@ extern const unsigned ScreenWidth, ScreenHeight;
 }
 
 int glow_main(int argc, char *argv[]){
-	if(argc || argv){}
-	puts("Lantern Game Engine starting");
+    if(argc || argv){}
+    puts("Lantern Game Engine starting");
     fflush(stdout);
 
-	return Lantern_Start();
+    return Lantern_Start();
 }
 
 static void lantern_frame_delay(){
@@ -52,7 +52,7 @@ static void lantern_frame_delay(){
 extern "C" LANTERN_FASTCALL
 int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archive_server){
 	
-    printf("Got window %p and archive server %p\n", window, archive_server);
+    printf("Got window %p and archive server %p\n", (void*)window, (void*)archive_server);
     fflush(stdout);
     LX_Ortho(Lantern::ScreenWidth, Lantern::ScreenHeight);
     LX_EnableBlending();
@@ -76,6 +76,9 @@ int Lantern_Run(struct Glow_Window *window, const Lantern::ArchiveServer *archiv
     }
     Lantern::Image text_background_image = texture_server.load("windowstyle1.tga"),
         outline_image = texture_server.load("windowstyle.png");
+
+    (void)text_background_image;
+    (void)outline_image;
 
     Lantern_FontContext *const ctx = Lantern_CreateFontContext();
     

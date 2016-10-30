@@ -27,19 +27,16 @@ for s in servers:
 
 asm_src = []
 
+if not is32bit:
+	src.append("init_amd64.asm")
+
 if mingw or os.name == "nt":
 	if is32bit:
-		src.append("init_win32.asm")
 		src.append("archive_server.c")
 	else:
-		src.append("init_win64.asm")
 		src.append("archive_server_win64.asm")
 else:
 	src.append("archive_server.c")
-	if is32bit:
-		src.append("init_sysv32.asm")
-	else:
-		src.append("init_sysv64.asm")
 
 if os.name == "nt" or mingw:
 	libs.append("OpenGL32")

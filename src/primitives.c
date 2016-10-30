@@ -11,7 +11,7 @@ const float rectangle_uv[16] = {
 	0.0f, 1.0f
 };
 
-LX_Buffer global_uv_buffer;;
+LX_Buffer global_uv_buffer;
 
 unsigned Lantern_PrimitiveSize(){
 	return sizeof(struct Lantern_Primitive);
@@ -60,23 +60,24 @@ void Lantern_CreateRectangle(struct Lantern_Primitive *primitive, unsigned w, un
 void Lantern_CreateUVRectangle(float u0, float v0, float u1, float v1,
     struct Lantern_Primitive *primitive, unsigned w, unsigned h, LX_Texture tex){
 
-    RECTANGLE_COORDS(data, 0, 0, w, h);
 	
     float uv[16];
+
+    RECTANGLE_COORDS(data, 0, 0, w, h);
     
-	LX_UploadBuffer(primitive->vbo, data, sizeof(data));
+    LX_UploadBuffer(primitive->vbo, data, sizeof(data));
     
-	primitive->tex_coord = LX_CreateBuffer();
+    primitive->tex_coord = LX_CreateBuffer();
     uv[0] = uv[6] = u0;
     uv[1] = uv[3] = v0;
     uv[2] = uv[4] = u1;
     uv[5] = uv[7] = v1;
     
-	LX_UploadBuffer(primitive->tex_coord, uv, sizeof(uv));
+    LX_UploadBuffer(primitive->tex_coord, uv, sizeof(uv));
 
-	primitive->length = 4;
+    primitive->length = 4;
     primitive->type = eLX_Fan;
-	primitive->texture.value = tex.value;
+    primitive->texture.value = tex.value;
     
 }
 
