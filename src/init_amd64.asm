@@ -67,8 +67,14 @@ Lantern_Start:
     xor rax, rax
 	
     mov ARG3, QWORD glow_title
-    mov ARG4, 2
-	
+    mov ARG4, 3
+
+%ifdef UNIX
+    mov r8, 2
+%else
+    mov QWORD [rsp], 2
+%endif
+    
     call Glow_CreateWindow
     mov r15, rax
 

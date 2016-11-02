@@ -52,11 +52,11 @@ static const GLint glow_attribs[] = {
     GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
     GLX_RENDER_TYPE, GLX_RGBA_BIT,
     GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
-    GLX_RED_SIZE, 8,
-    GLX_GREEN_SIZE, 8,
-    GLX_BLUE_SIZE, 8,
-    GLX_ALPHA_SIZE, 8,
-    GLX_DEPTH_SIZE, 16,
+    GLX_RED_SIZE, 6,
+    GLX_GREEN_SIZE, 6,
+    GLX_BLUE_SIZE, 6,
+    GLX_ALPHA_SIZE, 6,
+    GLX_DEPTH_SIZE, 8,
     GLX_DOUBLEBUFFER, True,
     None
 };
@@ -81,10 +81,13 @@ struct Glow_Window *Glow_CreateWindow(unsigned aW, unsigned aH,
     struct Glow_Window *const out =
         (struct Glow_Window *)malloc(sizeof(struct Glow_Window));
     GLXFBConfig fbconfig;
-
+/*
     context_attribs[1] = gl_maj;
     context_attribs[3] = gl_min;
-
+*/
+    fputs("Initializing OpenGL ", stdout);
+    printf("%i.%i", gl_maj, gl_min);
+    puts(" context");
     out->dpy = glow_get_display();
     if(out->dpy == NULL){
         fputs("Could not open an X11 display\n", stderr);
@@ -103,9 +106,9 @@ struct Glow_Window *Glow_CreateWindow(unsigned aW, unsigned aH,
     }
     
     {
-        int num, i, best = -1, best_samples = -1;
+        int num = 0, i, best = -1, best_samples = -1;
         GLXFBConfig *const config = glXChooseFBConfig(out->dpy,
-            out->scr_id, context_attribs, &num);
+            out->scr_id, glow_attribs, &num);
         if(config == NULL || num == 0){
             fputs("Could not get glX framebuffer configuration\n", stderr);
             goto xclose_err;

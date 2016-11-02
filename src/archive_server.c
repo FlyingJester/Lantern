@@ -91,7 +91,7 @@ void *lantern_low_create_global_archive(){
     for(i = 0; i < NUMDIRS; i++){
         unsigned e;
         for(e = 0; paths[i][e] != 0; e++){}
-        assert(e == path_sizes[i] + 1);
+        assert(e == path_sizes[i]);
     }
 #endif
     
